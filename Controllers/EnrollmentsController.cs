@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CourseManagementApi.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class EnrollmentsController : ControllerBase

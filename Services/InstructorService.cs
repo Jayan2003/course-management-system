@@ -44,6 +44,11 @@ public class InstructorService : IInstructorService
 
     public async Task<InstructorResponseDto> CreateAsync(CreateInstructorDto dto)
     {
+        var exists = await _context.Instructors
+        .AnyAsync(i => i.Email == dto.Email);
+
+        if (exists)
+          throw new Exception("Instructor with this email already exists");
         var instructor = new Instructor
         {
             Name = dto.Name,
@@ -62,10 +67,16 @@ public class InstructorService : IInstructorService
 
     public async Task<InstructorResponseDto?> UpdateAsync(int id, UpdateInstructorDto dto)
     {
+        
         var instructor = await _context.Instructors.FindAsync(id);
 
         if (instructor == null)
             return null;
+        var exists = await _context.Instructors
+          .AnyAsync(i => i.Email == dto.Email && i.Id != id);
+
+        if (exists)
+          throw new Exception("Instructor with this email already exists");
 
         instructor.Name = dto.Name;
         instructor.Email = dto.Email;

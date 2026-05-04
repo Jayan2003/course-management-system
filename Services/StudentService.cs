@@ -46,6 +46,13 @@ public class StudentService : IStudentService
 
     public async Task<StudentResponseDto> CreateAsync(CreateStudentDto dto)
     {
+        var exists = await _context.Students
+        .AnyAsync(s => s.Email == dto.Email);
+
+        if (exists)
+        {
+            throw new Exception("Student with this email already exists");
+        }
         var student = new Student
         {
             Name = dto.Name,
@@ -70,7 +77,12 @@ public class StudentService : IStudentService
 
         if (student == null)
             return null;
+        
+        var exists = await _context.Students
+          .AnyAsync(s => s.Email == dto.Email && s.Id != id);
 
+        if (exists)
+          throw new Exception("Student with this email already exists");
         student.Name = dto.Name;
         student.Email = dto.Email;
         student.Age = dto.Age;

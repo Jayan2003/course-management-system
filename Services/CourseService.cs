@@ -54,6 +54,11 @@ public class CourseService : ICourseService
     {
         var instructorExists = await _context.Instructors
             .AnyAsync(i => i.Id == dto.InstructorId);
+        var exists = await _context.Courses
+    .AnyAsync(c => c.Title == dto.Title);
+
+        if (exists)
+            throw new Exception("Course with this title already exists");
 
         if (!instructorExists)
             throw new Exception("Instructor not found");
@@ -79,10 +84,14 @@ public class CourseService : ICourseService
     public async Task<CourseResponseDto?> UpdateAsync(int id, UpdateCourseDto dto)
     {
         var course = await _context.Courses.FindAsync(id);
-
+        
         if (course == null)
             return null;
+        var exists = await _context.Courses
+           .AnyAsync(c => c.Title == dto.Title && c.Id != id);
 
+        if (exists)
+            throw new Exception("Course with this title already exists");
         var instructorExists = await _context.Instructors
             .AnyAsync(i => i.Id == dto.InstructorId);
 
