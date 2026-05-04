@@ -1,32 +1,35 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import api from '../services/axios'
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../services/axios";
 
 export default function LoginPage({ setIsLoggedIn, setRole }) {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
     try {
-      const res = await api.post('/auth/login', { username, password })
-      const userRole = res.data.role
-      localStorage.setItem('loggedIn', 'true')
-      localStorage.setItem('userRole', userRole)
-      setIsLoggedIn(true)
-      setRole(userRole)
-      navigate('/')
+      const res = await api.post("/auth/login", { username, password });
+      const userRole = res.data.role;
+
+      localStorage.setItem("username", username);
+      localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("userRole", userRole);
+
+      setIsLoggedIn(true);
+      setRole(userRole);
+      navigate("/");
     } catch {
-      setError('Invalid username or password. Please try again.')
+      setError("Invalid username or password. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="login-wrapper">
@@ -50,7 +53,7 @@ export default function LoginPage({ setIsLoggedIn, setRole }) {
             <input
               type="text"
               value={username}
-              onChange={e => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
               autoComplete="username"
               required
@@ -61,22 +64,35 @@ export default function LoginPage({ setIsLoggedIn, setRole }) {
             <input
               type="password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               autoComplete="current-password"
               required
             />
           </div>
-          <button className="btn btn-primary" type="submit" disabled={loading} style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}>
-            {loading ? 'Signing in…' : 'Sign in'}
+          <button
+            className="btn btn-primary"
+            type="submit"
+            disabled={loading}
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              marginTop: "0.5rem",
+            }}
+          >
+            {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem' }}>
-          Don't have an account?{' '}
-          <Link to="/register" style={{ color: 'var(--accent)' }}>Register</Link>
+        <p
+          style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.9rem" }}
+        >
+          Don't have an account?{" "}
+          <Link to="/register" style={{ color: "var(--accent)" }}>
+            Register
+          </Link>
         </p>
       </div>
     </div>
-  )
+  );
 }
