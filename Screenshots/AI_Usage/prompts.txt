@@ -1,0 +1,12 @@
+AI Assistance Prompts Used During Development
+
+* How can I implement login authentication using JWT in ASP.NET Core Web API?
+* What is the correct way to protect API endpoints using Bearer token authorization?
+* How do I configure Swagger UI to send JWT token in requests?
+* How can I create a background job using Hangfire in ASP.NET Core?
+* How to automatically delete old records from the database using a scheduled job?
+* How to design relationships between entities like Instructor, Course, and InstructorProfile?
+* What is the best structure for organizing controllers, models, and services in ASP.NET Core Web API?
+* How can I handle validation errors and return proper HTTP responses?
+* How to document API endpoints professionally in the project README file?
+* How to connect a Web API project with SQL Server using Entity Framework Core?
