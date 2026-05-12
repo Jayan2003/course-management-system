@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../services/axios'
@@ -6,23 +7,35 @@ export default function RegisterPage() {
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [role, setRole] = useState('Student')
+
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
     setError('')
     setSuccess('')
     setLoading(true)
+
     try {
-      await api.post('/auth/register', { name, username, password })
-      localStorage.setItem('userRole', 'User')
+      await api.post('/auth/register', {
+        name,
+        username,
+        password,
+        role
+      })
+
       setSuccess('Registered successfully! Redirecting to login…')
+
       setTimeout(() => navigate('/login'), 2000)
     } catch (err) {
       const msg = err.response?.data?.message
+
       setError(msg || 'Registration failed. Please try again.')
     } finally {
       setLoading(false)
@@ -34,7 +47,9 @@ export default function RegisterPage() {
       <div className="login-card">
         <div className="login-header">
           <div className="login-logo">🎓</div>
+
           <h2>Create an Account</h2>
+
           <p>Join EduTrack to get started</p>
         </div>
 
@@ -55,6 +70,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Name</label>
+
             <input
               type="text"
               value={name}
@@ -64,8 +80,10 @@ export default function RegisterPage() {
               required
             />
           </div>
+
           <div className="form-group">
             <label>Username</label>
+
             <input
               type="text"
               value={username}
@@ -75,8 +93,10 @@ export default function RegisterPage() {
               required
             />
           </div>
+
           <div className="form-group">
             <label>Password</label>
+
             <input
               type="password"
               value={password}
@@ -86,19 +106,49 @@ export default function RegisterPage() {
               required
             />
           </div>
+
+          <div className="form-group">
+            <label>Role</label>
+
+            <select
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              required
+            >
+              <option value="Student">Student</option>
+              <option value="Instructor">Instructor</option>
+            </select>
+          </div>
+
           <button
             className="btn btn-primary"
             type="submit"
             disabled={loading}
-            style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
+            style={{
+              width: '100%',
+              justifyContent: 'center',
+              marginTop: '0.5rem'
+            }}
           >
             {loading ? 'Creating account…' : 'Register'}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem' }}>
+        <p
+          style={{
+            textAlign: 'center',
+            marginTop: '1rem',
+            fontSize: '0.9rem'
+          }}
+        >
           Already have an account?{' '}
-          <Link to="/login" style={{ color: 'var(--accent)' }}>Sign in</Link>
+
+          <Link
+            to="/login"
+            style={{ color: 'var(--accent)' }}
+          >
+            Sign in
+          </Link>
         </p>
       </div>
     </div>

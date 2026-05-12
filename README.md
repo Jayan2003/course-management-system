@@ -1,4 +1,4 @@
-# 📘 Course Management System
+<!-- # 📘 Course Management System
 
 ## 📌 Project Description
 
@@ -348,4 +348,426 @@ This project demonstrates a complete full-stack system with:
 
 It is designed as a scalable academic management solution.
 
+--- -->
+
+````md
+# 📘 EduTrack – Course Management System
+
+## 📌 Project Description
+
+EduTrack is a full-stack academic management system built using **ASP.NET Core Web API**, **Entity Framework Core**, **SQL Server**, and a **React (Vite)** frontend.
+
+The platform supports three main roles:
+
+- **Admin**
+- **Student**
+- **Instructor**
+
+Each role has its own dashboard, permissions, and workflow.
+
+The system allows:
+
+- Students to register, enroll in courses, and view grades
+- Instructors to manage assigned students and submit grades
+- Admins to create and manage courses and assign instructors
+
+The project demonstrates important Web Engineering and Full-Stack Development concepts including:
+
+- JWT Authentication using HttpOnly cookies
+- Role-based Authorization
+- Entity relationships with Entity Framework Core
+- Service-layer architecture using Dependency Injection
+- Protected frontend routes
+- Role-based React dashboards
+- Background processing using Hangfire
+- Full-stack API integration using Axios
+
+The application is designed as a scalable academic management solution with secure authentication and modern UI/UX principles.
+
 ---
+
+# 🧰 Technologies Used
+
+## 🔹 ASP.NET Core Web API
+
+Framework used to build RESTful HTTP endpoints.
+
+## 🔹 Entity Framework Core
+
+ORM used to manage database operations and relationships.
+
+## 🔹 SQL Server
+
+Relational database used to store application data.
+
+## 🔹 JWT Authentication
+
+Used to authenticate users and protect API endpoints. The token is stored in an **HttpOnly cookie** for improved security.
+
+## 🔹 Role-Based Authorization
+
+Restricts access to routes and API endpoints based on user role.
+
+## 🔹 Swagger (OpenAPI)
+
+Provides interactive API documentation and endpoint testing.
+
+## 🔹 Hangfire
+
+Used for recurring background jobs and scheduled cleanup tasks.
+
+## 🔹 LINQ
+
+Used for optimized query projection and data shaping.
+
+## 🔹 React + Vite
+
+Frontend SPA with client-side routing, Axios integration, protected routes, and dynamic dashboards.
+
+---
+
+# 🔗 Entity Relationships
+
+## ✔ One-to-Many
+
+- Instructor → Courses
+
+## ✔ Many-to-Many
+
+- Students ↔ Courses (via Enrollment)
+
+## ✔ One-to-One
+
+- User ↔ Student
+- User ↔ Instructor
+
+---
+
+# ⭐ Features
+
+## 🔐 Authentication & Authorization
+
+- JWT Authentication using HttpOnly cookies
+- Secure login/logout system
+- BCrypt password hashing
+- Role-based authorization
+- Protected frontend routes
+
+---
+
+## 👨‍💼 Admin Features
+
+- Create and manage courses
+- Assign instructors to courses
+- Access admin dashboard
+
+---
+
+## 👨‍🎓 Student Features
+
+- Self-registration system
+- Browse available courses
+- Enroll in courses
+- View enrollments
+- View assigned grades
+- Student dashboard
+
+---
+
+## 👨‍🏫 Instructor Features
+
+- Self-registration system
+- View assigned courses
+- View enrolled students
+- Assign grades to students
+- Instructor dashboard
+
+---
+
+## ⚙ Backend Features
+
+- Clean service-layer architecture
+- DTO validation using Data Annotations
+- Global exception handling
+- LINQ query optimization
+- Background jobs using Hangfire
+- Entity Framework Core relationships
+
+---
+
+## 🎨 Frontend Features
+
+- React SPA using React Router
+- Role-based dashboards
+- Dark/Light mode
+- Axios API integration
+- Protected routes
+- Dynamic UI rendering
+
+---
+
+# 🔐 Authentication
+
+## Login
+
+```http
+POST /api/auth/login
+````
+
+### Example Request
+
+```json
+{
+  "username": "admin",
+  "password": "1234"
+}
+```
+
+### Example Response
+
+```json
+{
+  "message": "Login successful",
+  "role": "Admin"
+}
+```
+
+On successful login, the server sets an **HttpOnly cookie (`jwt`)** containing the authentication token.
+
+---
+
+## Registration
+
+```http
+POST /api/auth/register
+```
+
+Users can register as:
+
+* Student
+* Instructor
+
+Student and Instructor entities are automatically linked to the created user account.
+
+---
+
+## Logout
+
+```http
+POST /api/auth/logout
+```
+
+Clears the authentication cookie.
+
+---
+
+# 🛡 Role-Based Access
+
+| Role       | Permissions                           |
+| ---------- | ------------------------------------- |
+| Admin      | Manage courses and assign instructors |
+| Student    | Enroll in courses and view grades     |
+| Instructor | Manage assigned students and grades   |
+
+---
+
+# 🔒 Security Features
+
+## Password Hashing
+
+Passwords are hashed using **BCrypt** before storage.
+
+### Registration
+
+```csharp
+BCrypt.Net.BCrypt.HashPassword(password)
+```
+
+### Login Verification
+
+```csharp
+BCrypt.Net.BCrypt.Verify(password, hashedPassword)
+```
+
+Plain-text passwords are never stored in the database.
+
+---
+
+## Cookie-Based Authentication
+
+* JWT stored in HttpOnly cookie
+* Not accessible via JavaScript
+* Automatically sent with requests
+
+This protects against token theft and XSS attacks.
+
+---
+
+# 🌐 CORS Configuration
+
+Configured in `Program.cs`:
+
+* Allowed origin: `http://localhost:5173`
+* `AllowCredentials()` enabled
+* Supports secure frontend/backend communication using cookies
+
+---
+
+# 📡 API Endpoints
+
+## 🔐 Authentication
+
+* POST `/api/auth/login`
+* POST `/api/auth/register`
+* POST `/api/auth/logout`
+
+---
+
+## 📚 Courses
+
+* GET `/api/courses`
+* POST `/api/courses`
+* PUT `/api/courses/{id}`
+* DELETE `/api/courses/{id}`
+
+---
+
+## 👨‍🎓 Enrollments
+
+* POST `/api/enrollments/{courseId}`
+* GET `/api/enrollments/my`
+
+---
+
+## 👨‍🏫 Instructor
+
+* GET `/api/enrollments/instructor/students`
+* GET `/api/enrollments/instructor/courses`
+* PUT `/api/enrollments/grade`
+
+---
+
+# 🖥 Frontend
+
+## Routes
+
+| Route             | Description          |
+| ----------------- | -------------------- |
+| `/`               | Role-based dashboard |
+| `/login`          | Login page           |
+| `/register`       | Registration page    |
+| `/courses`        | Courses page         |
+| `/my-enrollments` | Student enrollments  |
+| `/my-courses`     | Instructor courses   |
+| `/my-students`    | Instructor students  |
+
+---
+
+## Frontend Behavior
+
+* Protected routes
+* Role-based dashboards
+* Dynamic navbar rendering
+* Axios with `withCredentials: true`
+* Persistent authentication using cookies
+* Responsive UI
+* Dark/Light theme toggle
+
+---
+
+# ▶ How to Run
+
+## Backend
+
+```bash
+dotnet ef database update
+dotnet run
+```
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+# 🍪 Why HttpOnly Cookies?
+
+* More secure than localStorage
+* Prevent token theft
+* Protect against XSS attacks
+* Automatic authentication handling
+
+---
+
+# ⏱ Background Jobs
+
+Hangfire is used to run recurring jobs.
+
+### Current Job
+
+* Automatically removes old enrollments from the database
+
+---
+
+# 📸 Application Screenshots
+
+All screenshots are located in:
+
+```text
+Screenshots/ApplicationScreenshots/
+```
+
+## Suggested Screenshots
+
+| Screenshot             | Description                 |
+| ---------------------- | --------------------------- |
+| HomePage.png           | Role-based dashboard        |
+| LoginPage.png          | Login page                  |
+| RegisterPage.png       | Registration page           |
+| CoursesPage.png        | Courses list                |
+| StudentEnrollments.png | Student enrollments         |
+| InstructorStudents.png | Instructor grading page     |
+| InstructorCourses.png  | Instructor assigned courses |
+| AdminCourses.png       | Admin course management     |
+| DarkMode.png           | Dark mode UI                |
+
+---
+
+# 🧠 Architecture
+
+```text
+Frontend (React)
+        ↓
+Controllers
+        ↓
+Service Layer
+        ↓
+DbContext
+        ↓
+SQL Server Database
+```
+
+---
+
+# 🎯 Conclusion
+
+EduTrack demonstrates a complete modern full-stack academic management platform with:
+
+* Secure JWT authentication
+* Role-based authorization
+* Real-world enrollment workflows
+* Instructor grading system
+* Student dashboards
+* Instructor dashboards
+* Clean architecture principles
+* Full-stack API integration
+
+The project combines backend engineering, frontend development, database management, authentication, and scalable software architecture into a professional academic management solution.
+
+```

@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -26,12 +27,18 @@ public class AuthController : ControllerBase
     {
         string role;
 
-        var dbUser = _db.Users.FirstOrDefault(u => u.Username == dto.Username);
-        if (dbUser != null && !BCrypt.Net.BCrypt.Verify(dto.Password, dbUser.Password))
+        var dbUser = _db.Users
+            .FirstOrDefault(u => u.Username == dto.Username);
+
+        if (dbUser != null &&
+            !BCrypt.Net.BCrypt.Verify(dto.Password, dbUser.Password))
+        {
             dbUser = null;
+        }
+
         if (dbUser != null)
         {
-            role = "User";
+            role = dbUser.Role;
         }
         else if (dto.Username == "admin" && dto.Password == "1234")
         {
@@ -42,17 +49,44 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, dto.Username),
             new Claim(ClaimTypes.Role, role)
         };
 
+        // Student Claim
+        if (dbUser?.StudentId != null)
+        {
+            claims.Add(
+                new Claim(
+                    "StudentId",
+                    dbUser.StudentId.ToString()!
+                )
+            );
+        }
+
+        // Instructor Claim
+        if (dbUser?.InstructorId != null)
+        {
+            claims.Add(
+                new Claim(
+                    "InstructorId",
+                    dbUser.InstructorId.ToString()!
+                )
+            );
+        }
+
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes("THIS_IS_MY_SUPER_SECRET_KEY_123456")
+            Encoding.UTF8.GetBytes(
+                "THIS_IS_MY_SUPER_SECRET_KEY_123456"
+            )
         );
 
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var creds = new SigningCredentials(
+            key,
+            SecurityAlgorithms.HmacSha256
+        );
 
         var token = new JwtSecurityToken(
             claims: claims,
@@ -60,7 +94,8 @@ public class AuthController : ControllerBase
             signingCredentials: creds
         );
 
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        var jwt = new JwtSecurityTokenHandler()
+            .WriteToken(token);
 
         Response.Cookies.Append("jwt", jwt, new CookieOptions
         {
@@ -70,14 +105,22 @@ public class AuthController : ControllerBase
             Expires = DateTime.UtcNow.AddHours(1)
         });
 
-        return Ok(new { message = "Login successful", role });
+        return Ok(new
+        {
+            message = "Login successful",
+            role
+        });
     }
 
     [HttpPost("logout")]
     public IActionResult Logout()
     {
         Response.Cookies.Delete("jwt");
-        return Ok(new { message = "Logged out successfully" });
+
+        return Ok(new
+        {
+            message = "Logged out successfully"
+        });
     }
 
     [AllowAnonymous]
@@ -85,16 +128,64 @@ public class AuthController : ControllerBase
     public IActionResult Register(RegisterDto dto)
     {
         if (_db.Users.Any(u => u.Username == dto.Username))
-            return BadRequest(new { message = "Username already taken" });
+        {
+            return BadRequest(new
+            {
+                message = "Username already taken"
+            });
+        }
 
-        _db.Users.Add(new User
+        Student? student = null;
+        Instructor? instructor = null;
+
+        // AUTO CREATE STUDENT
+        if (dto.Role == "Student")
+        {
+            student = new Student
+            {
+                Name = dto.Name,
+                Email = $"{dto.Username}@student.com",
+                Age = 18
+            };
+
+            _db.Students.Add(student);
+
+            _db.SaveChanges();
+        }
+
+        // AUTO CREATE INSTRUCTOR
+        if (dto.Role == "Instructor")
+        {
+            instructor = new Instructor
+            {
+                Name = dto.Name,
+                Email = $"{dto.Username}@instructor.com",
+                Bio = "",
+                OfficeLocation = ""
+            };
+
+            _db.Instructors.Add(instructor);
+
+            _db.SaveChanges();
+        }
+
+        var user = new User
         {
             Username = dto.Username,
             Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            Name = dto.Name
-        });
+            Name = dto.Name,
+            Role = dto.Role,
+            StudentId = student?.Id,
+            InstructorId = instructor?.Id
+        };
+
+        _db.Users.Add(user);
+
         _db.SaveChanges();
 
-        return Ok(new { message = "Registered successfully" });
+        return Ok(new
+        {
+            message = "Registered successfully"
+        });
     }
 }

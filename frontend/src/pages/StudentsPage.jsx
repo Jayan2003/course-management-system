@@ -95,7 +95,7 @@ export default function StudentsPage({ role }) {
                   <td>{s.id}</td>
                   <td>{s.name}</td>
                   <td>{s.email}</td>
-                  
+
                   {isAdmin && (
                     <td>
                       <div className="td-actions">

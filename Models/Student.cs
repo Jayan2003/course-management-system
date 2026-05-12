@@ -1,3 +1,4 @@
+
 namespace CourseManagementApi.Models;
 
 public class Student
@@ -11,4 +12,7 @@ public class Student
     public int Age { get; set; }
 
     public List<Enrollment> Enrollments { get; set; } = new();
+
+    // One Student → One User
+    public User? User { get; set; }
 }

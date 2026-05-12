@@ -1,3 +1,4 @@
+
 namespace CourseManagementApi.Models;
 
 public class Enrollment
@@ -11,4 +12,7 @@ public class Enrollment
     public Course Course { get; set; } = null!;
 
     public DateTime EnrollDate { get; set; }
+
+    // NEW
+    public double? Grade { get; set; }
 }

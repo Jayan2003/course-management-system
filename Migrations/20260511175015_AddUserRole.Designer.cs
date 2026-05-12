@@ -4,6 +4,7 @@ using CourseManagementApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseManagementApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260511175015_AddUserRole")]
+    partial class AddUserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,9 +61,6 @@ namespace CourseManagementApi.Migrations
                     b.Property<DateTime>("EnrollDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double?>("Grade")
-                        .HasColumnType("float");
-
                     b.HasKey("StudentId", "CourseId");
 
                     b.HasIndex("CourseId");
@@ -91,9 +91,6 @@ namespace CourseManagementApi.Migrations
                     b.Property<string>("OfficeLocation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -132,9 +129,6 @@ namespace CourseManagementApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("InstructorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -147,22 +141,11 @@ namespace CourseManagementApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("StudentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("InstructorId")
-                        .IsUnique()
-                        .HasFilter("[InstructorId] IS NOT NULL");
-
-                    b.HasIndex("StudentId")
-                        .IsUnique()
-                        .HasFilter("[StudentId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -197,23 +180,6 @@ namespace CourseManagementApi.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("CourseManagementApi.Models.User", b =>
-                {
-                    b.HasOne("CourseManagementApi.Models.Instructor", "Instructor")
-                        .WithOne("User")
-                        .HasForeignKey("CourseManagementApi.Models.User", "InstructorId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("CourseManagementApi.Models.Student", "Student")
-                        .WithOne("User")
-                        .HasForeignKey("CourseManagementApi.Models.User", "StudentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Instructor");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("CourseManagementApi.Models.Course", b =>
                 {
                     b.Navigation("Enrollments");
@@ -222,15 +188,11 @@ namespace CourseManagementApi.Migrations
             modelBuilder.Entity("CourseManagementApi.Models.Instructor", b =>
                 {
                     b.Navigation("Courses");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CourseManagementApi.Models.Student", b =>
                 {
                     b.Navigation("Enrollments");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }
