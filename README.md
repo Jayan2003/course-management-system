@@ -350,7 +350,7 @@ It is designed as a scalable academic management solution.
 
 --- -->
 
-````md
+
 # 📘 EduTrack – Course Management System
 
 ## 📌 Project Description
